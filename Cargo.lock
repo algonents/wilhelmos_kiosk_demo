@@ -420,8 +420,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "kiosk_app_demo"
-version = "0.2.1"
+name = "kiosk-app-demo"
+version = "0.2.2"
 dependencies = [
  "wilhelm_renderer",
  "wilhelmos_kiosk",
