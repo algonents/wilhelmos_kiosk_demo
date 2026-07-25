@@ -1050,7 +1050,17 @@ dependencies = [
 
 [[package]]
 name = "wilhelmos-kiosk-demo"
+version = "0.2.0"
+dependencies = [
+ "wilhelm_renderer",
+ "wilhelmos_kiosk",
+]
+
+[[package]]
+name = "wilhelmos_kiosk"
 version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1f4efcf1534ec8ce355343c52d96d72ee674127cf12389be68903c5bd63a8959"
 dependencies = [
  "wilhelm_renderer",
  "wilhelm_renderer_imgui",

@@ -1,20 +1,33 @@
 # wilhelmos-kiosk-demo
 
-The **WilhelmOS reference kiosk application**: a fullscreen
-[wilhelm_renderer](https://github.com/algonents/wilhelm_renderer) +
-[Dear ImGui](https://github.com/ocornut/imgui) (via
-[wilhelm_renderer_imgui](https://github.com/algonents/wilhelm_renderer_imgui))
-demo that validates the WilhelmOS graphical kiosk stack end to end:
+The **WilhelmOS reference kiosk application**: a fullscreen demo built on
+the [wilhelmos_kiosk](https://github.com/algonents/wilhelmos_kiosk)
+application framework, validating the WilhelmOS graphical kiosk stack end
+to end:
 
 ```
 systemd → cage → wilhelmos-kiosk-demo → OpenGL → DRM/KMS → display
 ```
 
-It is also the worked example for integrators: a WilhelmOS kiosk
-application is a fullscreen binary crate exactly like this one, packaged
-by a Yocto cargo recipe that pins a release tag of its repo (see
-`meta-wilhelmos/recipes-graphics/wilhelmos-kiosk-demo/` in
-[WilhelmOS](https://github.com/algonents/wilhelmos)).
+## What this repo is (and isn't)
+
+This repo is deliberately a **packaging shell**. The application code
+mirrors the framework's own
+[`hello_kiosk`](https://github.com/algonents/wilhelmos_kiosk/blob/master/examples/hello_kiosk.rs)
+example — *that* is the canonical "how do I write a kiosk app". What this
+repo demonstrates is the **packaging contract** an integrator copies:
+
+- a standalone fullscreen binary crate,
+- a committed `Cargo.lock` with **crates.io dependencies only**,
+- release tags,
+- consumed by a Yocto cargo recipe that pins the tag and provides
+  `virtual/kiosk-app` / `/usr/libexec/kiosk-app` (see
+  `meta-wilhelmos/recipes-graphics/wilhelmos-kiosk-demo/` in
+  [WilhelmOS](https://github.com/algonents/wilhelmos), and the composition
+  contract in its `docs/DESIGN.md` §7).
+
+A customer kiosk application is a crate shaped exactly like this one, with
+their application where `DemoApp` is.
 
 ## Running (desktop)
 
@@ -22,9 +35,11 @@ by a Yocto cargo recipe that pins a release tag of its repo (see
 cargo run
 ```
 
-Creates a fullscreen window on the primary monitor with a triangle and an
-ImGui control panel. On a desktop this runs under your normal session; on
-WilhelmOS it is launched by the cage compositor as the kiosk session.
+Fullscreen window on the primary monitor: a triangle with an ImGui control
+panel and an FPS overlay. Escape exits (via the framework's
+`request_exit`); on WilhelmOS the app is launched and supervised by the
+cage kiosk session. On a Wayland/X11 desktop it runs under your normal
+session.
 
 ## Releasing
 

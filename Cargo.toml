@@ -1,16 +1,20 @@
 [package]
 name = "wilhelmos-kiosk-demo"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Anwar Ludin <anwar.ludin@algonents.com>"]
 license = "MIT"
-description = "WilhelmOS reference kiosk application: fullscreen wilhelm_renderer + Dear ImGui demo"
+description = "WilhelmOS reference kiosk application: the wilhelmos_kiosk framework demo, packaged"
 repository = "https://github.com/algonents/wilhelmos-kiosk-demo"
 
 # Release rule: a tagged release must not contain git dependencies in its
 # lockfile — only published crates.io versions. Git deps are a
 # development-time tool only (the WilhelmOS recipe pins tags and fetches
 # every locked crate individually).
+#
+# wilhelm_renderer is used directly for shape geometry types (Triangle);
+# keep its version in lockstep with the one wilhelmos_kiosk depends on so
+# a single wilhelm_renderer_sys resolves.
 [dependencies]
+wilhelmos_kiosk = "0.1.0"
 wilhelm_renderer = "0.13.0"
-wilhelm_renderer_imgui = "0.10.0"

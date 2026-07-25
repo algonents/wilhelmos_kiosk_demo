@@ -1,67 +1,90 @@
 //! WilhelmOS reference kiosk application.
 //!
 //! Runs fullscreen on the primary monitor — launched by the cage
-//! compositor as the WilhelmOS kiosk session. All positions are derived
-//! from the actual window dimensions instead of being hardcoded, so the
-//! app works at any display resolution.
+//! compositor as the WilhelmOS kiosk session.
+//!
+//! Since v0.2.0 this repo is deliberately a **packaging shell**: the
+//! application code below mirrors the `hello_kiosk` example of the
+//! [`wilhelmos_kiosk`](https://github.com/algonents/wilhelmos_kiosk)
+//! framework (the canonical "how to write a kiosk app"), and what this
+//! repo demonstrates is the *packaging contract* an integrator copies —
+//! a standalone binary crate with a committed lockfile and release tags,
+//! consumed by a Yocto cargo recipe that provides `virtual/kiosk-app`.
 
-use std::cell::RefCell;
-use std::rc::Rc;
+use wilhelm_renderer::graphics2d::shapes::Triangle;
+use wilhelmos_kiosk::{
+    Color, Context, Event, FpsOverlay, Key, Kiosk, KioskApp, KioskError, ShapeId, ShapeKind,
+    ShapeRenderable, ShapeStyle, Ui,
+};
 
-use wilhelm_renderer::core::{App, Color, Window};
-use wilhelm_renderer::graphics2d::shapes::{ShapeKind, ShapeRenderable, ShapeStyle, Triangle};
-use wilhelm_renderer_imgui::ImGui;
+#[derive(Default)]
+struct DemoApp {
+    triangle: Option<ShapeId>,
+    pos: (f32, f32),
+    scale: f32,
+    size: (f32, f32),
+    fps: FpsOverlay,
+}
 
-fn main() {
-    let window = Window::new_fullscreen("Wilhelm Renderer Kiosk", Color::from_rgb(0.1, 0.1, 0.15));
-    let (width, height) = (window.width() as f32, window.height() as f32);
-    let (center_x, center_y) = (width / 2.0, height / 2.0);
-    let mut app = App::new(window);
+impl KioskApp for DemoApp {
+    fn init(&mut self, ctx: &mut Context) -> Result<(), KioskError> {
+        let (w, h) = ctx.size();
+        self.size = (w as f32, h as f32);
+        self.pos = (self.size.0 / 2.0, self.size.1 / 2.0);
+        self.scale = 1.0;
 
-    // Triangle centered on the screen, sized relative to the display
-    let half = height * 0.15;
-    let mut triangle = ShapeRenderable::from_shape(
-        ShapeKind::Triangle(Triangle::new([
-            (-half, half * 0.5),
-            (half, half * 0.5),
-            (0.0, -half),
-        ])),
-        ShapeStyle::fill(Color::from_rgb(0.2, 0.6, 0.9)),
-    );
-    triangle.set_position(center_x, center_y);
-    app.add_shape(triangle);
+        // Everything is sized relative to the display, so the app works at
+        // any resolution.
+        let half = self.size.1 * 0.15;
+        let triangle = ShapeRenderable::from_shape(
+            ShapeKind::Triangle(Triangle::new([
+                (-half, half * 0.5),
+                (half, half * 0.5),
+                (0.0, -half),
+            ])),
+            ShapeStyle::fill(Color::from_rgb(0.2, 0.6, 0.9)),
+        );
+        self.triangle = Some(ctx.add_shape(triangle));
+        Ok(())
+    }
 
-    let imgui = ImGui::new(app.window.glfw_window_ptr(), true);
-
-    let pos_x = Rc::new(RefCell::new(center_x));
-    let pos_y = Rc::new(RefCell::new(center_y));
-    let scale = Rc::new(RefCell::new(1.0f32));
-
-    let pos_x_update = Rc::clone(&pos_x);
-    let pos_y_update = Rc::clone(&pos_y);
-    let scale_update = Rc::clone(&scale);
-
-    app.on_pre_render(move |shapes, _renderer| {
-        if let Some(shape) = shapes.first_mut() {
-            shape.set_position(*pos_x_update.borrow(), *pos_y_update.borrow());
-            shape.set_scale(*scale_update.borrow());
+    fn update(&mut self, ctx: &mut Context, _dt: f32) {
+        if let Some(id) = self.triangle {
+            if let Some(shape) = ctx.shape_mut(id) {
+                shape.set_position(self.pos.0, self.pos.1);
+                shape.set_scale(self.scale);
+            }
         }
-    });
+    }
 
-    app.on_render(move |_renderer, _camera| {
-        imgui.new_frame();
+    fn ui(&mut self, ui: &Ui<'_>, ctx: &mut Context) {
+        ui.window("Shape Controls", 0, |im| {
+            im.text("Position");
+            im.slider_float("X", &mut self.pos.0, 0.0, self.size.0);
+            im.slider_float("Y", &mut self.pos.1, 0.0, self.size.1);
+            im.separator();
+            im.text("Transform");
+            im.slider_float("Scale", &mut self.scale, 0.1, 3.0);
+        });
+        self.fps.ui(ui, ctx);
+    }
 
-        imgui.begin("Shape Controls", None, 0);
-        imgui.text("Position");
-        imgui.slider_float("X", &mut pos_x.borrow_mut(), 0.0, width);
-        imgui.slider_float("Y", &mut pos_y.borrow_mut(), 0.0, height);
-        imgui.separator();
-        imgui.text("Transform");
-        imgui.slider_float("Scale", &mut scale.borrow_mut(), 0.1, 3.0);
-        imgui.end();
+    fn on_event(&mut self, event: &Event, ctx: &mut Context) {
+        if let Event::Key {
+            key: Key::ESCAPE,
+            action,
+            ..
+        } = event
+        {
+            if action.is_press() {
+                ctx.request_exit();
+            }
+        }
+    }
+}
 
-        imgui.render();
-    });
-
-    app.run();
+fn main() -> Result<(), KioskError> {
+    Kiosk::new("WilhelmOS Kiosk Demo")
+        .background(Color::from_rgb(0.1, 0.1, 0.15))
+        .run(DemoApp::default())
 }
