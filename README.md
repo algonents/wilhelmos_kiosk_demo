@@ -1,4 +1,4 @@
-# wilhelmos-kiosk-demo
+# kiosk_app_demo
 
 The **WilhelmOS reference kiosk application**: a fullscreen demo built on
 the [wilhelmos_kiosk](https://github.com/algonents/wilhelmos_kiosk)
@@ -6,7 +6,7 @@ application framework, validating the WilhelmOS graphical kiosk stack end
 to end:
 
 ```
-systemd → cage → wilhelmos-kiosk-demo → OpenGL → DRM/KMS → display
+systemd → cage → kiosk_app_demo → OpenGL → DRM/KMS → display
 ```
 
 ## What this repo is (and isn't)
@@ -22,7 +22,7 @@ repo demonstrates is the **packaging contract** an integrator copies:
 - release tags,
 - consumed by a Yocto cargo recipe that pins the tag and provides
   `virtual/kiosk-app` / `/usr/libexec/kiosk-app` (see
-  `meta-wilhelmos/recipes-graphics/wilhelmos-kiosk-demo/` in
+  `meta-wilhelmos/recipes-graphics/kiosk-app-demo/` in
   [WilhelmOS](https://github.com/algonents/wilhelmos), and the composition
   contract in its `docs/DESIGN.md` §7).
 
@@ -48,4 +48,4 @@ session.
 2. `cargo build` to refresh `Cargo.lock`, commit it.
 3. Tag `vX.Y.Z` and push the tag.
 4. In WilhelmOS: bump the recipe `SRCREV`/`PV` to the tag and regenerate
-   the crates include (`bitbake -c update_crates wilhelmos-kiosk-demo`).
+   the crates include (`bitbake -c update_crates kiosk-app-demo`).

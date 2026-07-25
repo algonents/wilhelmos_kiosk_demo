@@ -420,6 +420,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "kiosk_app_demo"
+version = "0.2.1"
+dependencies = [
+ "wilhelm_renderer",
+ "wilhelmos_kiosk",
+]
+
+[[package]]
 name = "lebe"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1046,14 +1054,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "233c7c9b999d08c9d1dd83e47da0f4f2a4743dde2911a367ce6ac1624729beb3"
 dependencies = [
  "cmake",
-]
-
-[[package]]
-name = "wilhelmos-kiosk-demo"
-version = "0.2.0"
-dependencies = [
- "wilhelm_renderer",
- "wilhelmos_kiosk",
 ]
 
 [[package]]
