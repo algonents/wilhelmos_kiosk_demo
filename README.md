@@ -11,11 +11,11 @@ systemd → cage → kiosk-app-demo → OpenGL → DRM/KMS → display
 
 ## What this repo is (and isn't)
 
-This repo is deliberately a **packaging shell**. The application code
-mirrors the framework's own
-[`hello_kiosk`](https://github.com/algonents/wilhelmos_kiosk/blob/master/examples/hello_kiosk.rs)
-example — *that* is the canonical "how do I write a kiosk app". What this
-repo demonstrates is the **packaging contract** an integrator copies:
+This repo is the **canonical wilhelmos_kiosk example** — the framework
+repo deliberately ships no example of its own, so there is exactly one
+reference app to keep current. It demonstrates two things: how to write
+a kiosk app on the framework (`src/main.rs`), and the **packaging
+contract** an integrator copies:
 
 - a standalone fullscreen binary crate,
 - a committed `Cargo.lock` with **crates.io dependencies only**,
@@ -36,10 +36,12 @@ cargo run
 ```
 
 Fullscreen window on the primary monitor: a triangle with an ImGui control
-panel and an FPS overlay. Escape exits (via the framework's
-`request_exit`); on WilhelmOS the app is launched and supervised by the
-cage kiosk session. On a Wayland/X11 desktop it runs under your normal
-session.
+panel and an FPS overlay. There is deliberately no key bound to exit — a
+kiosk app's lifecycle belongs to its supervisor, and a bound key would be
+an operator-seat kill switch. To exit a desktop test run, Ctrl+C in the
+launching terminal (SIGINT takes the framework's clean shutdown path). On
+WilhelmOS the app is launched and supervised by the cage kiosk session
+(`systemctl stop/restart` there).
 
 ## Releasing
 

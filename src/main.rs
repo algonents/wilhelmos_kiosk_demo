@@ -1,20 +1,25 @@
-//! WilhelmOS reference kiosk application.
+//! WilhelmOS reference kiosk application — **the canonical
+//! [`wilhelmos_kiosk`](https://github.com/algonents/wilhelmos_kiosk)
+//! example** (the framework repo deliberately ships none of its own).
 //!
 //! Runs fullscreen on the primary monitor — launched by the cage
-//! compositor as the WilhelmOS kiosk session.
+//! compositor as the WilhelmOS kiosk session. The code below shows the
+//! framework in practice: state in plain struct fields (no
+//! `Rc<RefCell<..>>`), a composed component (`FpsOverlay`), scoped ImGui
+//! via `Ui`. The repo around it demonstrates the *packaging contract* an
+//! integrator copies — a standalone binary crate with a committed
+//! lockfile and release tags, consumed by a Yocto cargo recipe that
+//! provides `virtual/kiosk-app`.
 //!
-//! Since v0.2.0 this repo is deliberately a **packaging shell**: the
-//! application code below mirrors the `hello_kiosk` example of the
-//! [`wilhelmos_kiosk`](https://github.com/algonents/wilhelmos_kiosk)
-//! framework (the canonical "how to write a kiosk app"), and what this
-//! repo demonstrates is the *packaging contract* an integrator copies —
-//! a standalone binary crate with a committed lockfile and release tags,
-//! consumed by a Yocto cargo recipe that provides `virtual/kiosk-app`.
+//! Deliberately no key-to-exit binding: a kiosk app's lifecycle belongs
+//! to the supervisor, and a bound key would be an operator-seat kill
+//! switch. To exit during desktop testing, Ctrl+C — SIGINT takes the
+//! framework's clean shutdown path (wilhelmos_kiosk DESIGN.md §3, §9).
 
 use wilhelm_renderer::graphics2d::shapes::Triangle;
 use wilhelmos_kiosk::{
-    Color, Context, Event, FpsOverlay, Key, Kiosk, KioskApp, KioskError, ShapeId, ShapeKind,
-    ShapeRenderable, ShapeStyle, Ui,
+    Color, Context, FpsOverlay, Kiosk, KioskApp, KioskError, ShapeId, ShapeKind, ShapeRenderable,
+    ShapeStyle, Ui,
 };
 
 #[derive(Default)]
@@ -67,19 +72,6 @@ impl KioskApp for DemoApp {
             im.slider_float("Scale", &mut self.scale, 0.1, 3.0);
         });
         self.fps.ui(ui, ctx);
-    }
-
-    fn on_event(&mut self, event: &Event, ctx: &mut Context) {
-        if let Event::Key {
-            key: Key::ESCAPE,
-            action,
-            ..
-        } = event
-        {
-            if action.is_press() {
-                ctx.request_exit();
-            }
-        }
     }
 }
 
