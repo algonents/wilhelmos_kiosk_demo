@@ -1,6 +1,6 @@
 [package]
 name = "kiosk-app-demo"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2021"
 authors = ["Anwar Ludin <anwar.ludin@algonents.com>"]
 license = "MIT"
@@ -16,5 +16,5 @@ repository = "https://github.com/algonents/kiosk-app-demo"
 # keep its version in lockstep with the one wilhelmos_kiosk depends on so
 # a single wilhelm_renderer_sys resolves.
 [dependencies]
-wilhelmos_kiosk = "0.1.0"
+wilhelmos_kiosk = "0.2.0"
 wilhelm_renderer = "0.13.0"
