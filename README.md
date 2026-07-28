@@ -1,4 +1,4 @@
-# kiosk-app-demo
+# wilhelmos_kiosk_demo
 
 The **WilhelmOS reference kiosk application**: a fullscreen demo built on
 the [wilhelmos_kiosk](https://github.com/algonents/wilhelmos_kiosk)
@@ -6,7 +6,7 @@ application framework, validating the WilhelmOS graphical kiosk stack end
 to end:
 
 ```
-systemd → cage → kiosk-app-demo → OpenGL → DRM/KMS → display
+systemd → cage → wilhelmos_kiosk_demo → OpenGL → DRM/KMS → display
 ```
 
 ## What this repo is (and isn't)

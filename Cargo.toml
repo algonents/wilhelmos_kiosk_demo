@@ -1,5 +1,5 @@
 [package]
-name = "kiosk-app-demo"
+name = "wilhelmos_kiosk_demo"
 version = "0.3.0"
 edition = "2021"
 authors = ["Anwar Ludin <anwar.ludin@algonents.com>"]
