@@ -22,7 +22,7 @@ contract** an integrator copies:
 - release tags,
 - consumed by a Yocto cargo recipe that pins the tag and provides
   `virtual/kiosk-app` / `/usr/libexec/kiosk-app` (see
-  `meta-wilhelmos/recipes-graphics/kiosk-app-demo/` in
+  `meta-wilhelmos/recipes-graphics/wilhelmos-kiosk-demo/` in
   [WilhelmOS](https://github.com/algonents/wilhelmos), and the composition
   contract in its `docs/DESIGN.md` §7).
 
@@ -50,4 +50,4 @@ WilhelmOS the app is launched and supervised by the cage kiosk session
 2. `cargo build` to refresh `Cargo.lock`, commit it.
 3. Tag `vX.Y.Z` and push the tag.
 4. In WilhelmOS: bump the recipe `SRCREV`/`PV` to the tag and regenerate
-   the crates include (`bitbake -c update_crates kiosk-app-demo`).
+   the crates include (`bitbake -c update_crates wilhelmos-kiosk-demo`).

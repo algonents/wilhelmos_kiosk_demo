@@ -1,11 +1,11 @@
 [package]
 name = "wilhelmos_kiosk_demo"
-version = "0.3.0"
+version = "0.3.1"
 edition = "2021"
 authors = ["Anwar Ludin <anwar.ludin@algonents.com>"]
 license = "MIT"
 description = "WilhelmOS reference kiosk application: the wilhelmos_kiosk framework demo, packaged"
-repository = "https://github.com/algonents/kiosk-app-demo"
+repository = "https://github.com/algonents/wilhelmos_kiosk_demo"
 
 # Release rule: a tagged release must not contain git dependencies in its
 # lockfile — only published crates.io versions. Git deps are a
